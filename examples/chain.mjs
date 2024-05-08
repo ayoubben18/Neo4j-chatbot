@@ -14,7 +14,7 @@ Tell me about the following fruit: {fruit}
 import { ChatOpenAI } from "@langchain/openai";
 
 const llm = new ChatOpenAI({
-  // openAIApiKey: "sk-...",
+  openAIApiKey: "sk-...",
 });
 // end::llm[]
 

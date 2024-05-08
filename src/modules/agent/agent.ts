@@ -19,16 +19,41 @@ export default async function initAgent(
   graph: Neo4jGraph
 ) {
   // TODO: Initiate tools
-  // const tools = ...
+  const tools = await initTools(llm, embeddings, graph);
   // TODO: Pull the prompt from the hub
-  // const prompt = ...
+  const prompt = await pull<ChatPromptTemplate>(
+      "hwchase17/openai-functions-agent"
+  );
   // TODO: Create an agent
-  // const agent = ...
+  const agent = await createOpenAIFunctionsAgent({
+    llm,
+    tools,
+    prompt,
+  });
   // TODO: Create an agent executor
-  // const executor = ...
+  const executor = new AgentExecutor({
+    agent,
+    tools,
+    verbose: true, // Verbose output logs the agents _thinking_
+  });
   // TODO: Create a rephrase question chain
-  // const rephraseQuestionChain = ...
+  const rephraseQuestionChain = await initRephraseChain(llm);
   // TODO: Return a runnable passthrough
-  // return ...
+  return (
+      RunnablePassthrough.assign<{ input: string; sessionId: string }, any>({
+        // Get Message History
+        history: async (_input, options) => {
+          const history = await getHistory(
+              options?.config.configurable.sessionId
+          );
+
+          return history;
+        },
+      }).assign({
+        // Use History to rephrase the question
+        rephrasedQuestion: (input: RephraseQuestionInput, config: any) =>
+            rephraseQuestionChain.invoke(input, config),
+      })// Pass to the executor
+          .pipe(executor) .pick("output"))
 }
 // end::function[]

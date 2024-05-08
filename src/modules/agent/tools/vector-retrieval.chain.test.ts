@@ -75,6 +75,7 @@ describe("Vector Retrieval Chain", () => {
     `,
       { sessionId }
     );
+    // console.log(res)
 
     expect(res).toBeDefined();
 

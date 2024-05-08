@@ -1,4 +1,4 @@
-Given the following conversation and a question,
+ Given the following conversation and a question,
 rephrase the follow-up question to be a standalone question about the
 subject of the conversation history.
 
